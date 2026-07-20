@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 600);
     }
   };
-  const preloaderTimeout = setTimeout(hidePreloader, 5000);
+  const preloaderTimeout = setTimeout(hidePreloader, 3000);
 
   window.addEventListener('load', () => {
     clearTimeout(preloaderTimeout);
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const backToTop = document.getElementById('back-to-top');
   if (backToTop) {
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) { // Show button after scrolling down 300px
+      if (window.scrollY > 300) {
         backToTop.classList.add('show');
       } else {
         backToTop.classList.remove('show');
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(type, 100);
       } else {
         if (penElement) {
-            penElement.style.opacity = 0;
+          penElement.style.opacity = 0;
         }
       }
     }
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const profit = revenue - expenses;
           if (profit >= 0) {
             resultDisplay.textContent = `Success: Your estimated monthly profit is: ₦${profit.toLocaleString()}`;
-            resultDisplay.style.color = '#2dd4bf';
+            resultDisplay.style.color = '#2563EB';
           } else {
             resultDisplay.textContent = `Error: You incurred a loss of: ₦${Math.abs(profit).toLocaleString()}`;
             resultDisplay.style.color = '#ef4444';
@@ -209,24 +209,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const deviceButtons = document.querySelectorAll('.device-btn');
   const siteUrlInput = document.getElementById('site-url');
   const devicePreviewContainer = document.getElementById('device-preview-container');
-  let toastTimeout; // Keep toastTimeout in this scope
+  let toastTimeout;
 
   if (openCheckerBtn && deviceModal && closeModal && deviceButtons.length && siteUrlInput && devicePreviewContainer) {
-    
+
     function showToast(message, isError = false) {
-        clearTimeout(toastTimeout);
-        const toast = document.getElementById('toast');
-        if (toast) {
-            toast.textContent = message;
-            toast.style.backgroundColor = isError ? '#ef4444' : 'var(--secondary)';
-            toast.classList.add('show');
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-                toast.textContent = '';
-            }, 2500);
-        }
+      clearTimeout(toastTimeout);
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.textContent = message;
+        toast.style.backgroundColor = isError ? '#ef4444' : 'var(--primary)';
+        toast.classList.add('show');
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove('show');
+          toast.textContent = '';
+        }, 2500);
+      }
     }
-    
+
     openCheckerBtn.addEventListener('click', () => {
       deviceModal.style.display = 'flex';
       siteUrlInput.focus();
@@ -271,13 +271,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const frameHTML = `
             <div class="${dimensions.frameClass}" style="width: ${dimensions.width / 10}rem; height: ${dimensions.height / 10}rem;">
-                ${device !== 'desktop' ? '' : ''}
                 <div class="device-screen">
-                    <iframe 
-                        src="${url}" 
+                    <iframe
+                        src="${url}"
                         sandbox="allow-same-origin allow-scripts allow-forms"
                         aria-label="Preview of ${url} on ${device}"
-                        width="100%" 
+                        width="100%"
                         height="100%"
                         style="border: none; display: block;"
                     ></iframe>
@@ -285,202 +284,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${device !== 'desktop' ? '<div class="device-header"><h3>Live Preview</h3><i class="fas fa-signal device-header-icon"></i></div>' : ''}
             </div>
         `;
-        
+
         devicePreviewContainer.innerHTML = frameHTML;
-        
-        // deviceModal.style.display = 'none'; // Commented out as per original code behavior after running check. I kept the original structure.
       });
     });
   }
 
-  window.addEventListener('load', () => {
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      gsap.registerPlugin(ScrollTrigger);
+  const footerYear = document.getElementById('footer-year');
+  if (footerYear) {
+    footerYear.textContent = new Date().getFullYear();
+  }
 
-      if (window.matchMedia('(max-width: 480px)').matches) {
-        gsap.config({ autoSleep: 60, force3D: false });
-      }
-
-      gsap.to('#back-to-top', {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: 'body',
-          start: '100px top',
-          toggleActions: 'play none none reverse',
-          toggleClass: 'show'
-        }
-      });
-
-      document.querySelectorAll('.parallax-section').forEach(section => {
-        const bg = section.querySelector('.hero-background') || section;
-        gsap.to(bg, {
-          y: '15%',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true
-          }
-        });
-      });
-
-      const cards = document.querySelectorAll('.project-card, .tool-card');
-      if (cards.length) {
-        cards.forEach((card, index) => {
-          gsap.from(card, {
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 90%',
-              toggleActions: 'play none none none'
-            }
-          });
-
-          card.addEventListener('mouseenter', () => {
-            const isFirstCard = index === 0;
-            gsap.to(card, {
-              rotationX: isFirstCard ? 8 : 3,
-              rotationY: isFirstCard ? 8 : 3,
-              duration: 0.3,
-              ease: 'power2.out'
-            });
-            if (isFirstCard) {
-              gsap.to(card.querySelector('.btn.micro-interaction'), {
-                backgroundColor: '#008c3f',
-                duration: 0.3
-              });
-            }
-            const details = card.querySelector('.project-details');
-            if (details) details.setAttribute('aria-hidden', 'false');
-          });
-
-          card.addEventListener('mouseleave', () => {
-            gsap.to(card, {
-              rotationX: 0,
-              rotationY: 0,
-              duration: 0.3,
-              ease: 'power2.out'
-            });
-            if (index === 0) {
-              gsap.to(card.querySelector('.btn.micro-interaction'), {
-                backgroundColor: '#00A651',
-                duration: 0.3
-              });
-            }
-            const details = card.querySelector('.project-details');
-            if (details) details.setAttribute('aria-hidden', 'true');
-          });
-        });
-      }
-
-      gsap.utils.toArray('.connect-card').forEach((card, index) => {
-        gsap.from(card, {
-          opacity: 0,
-          y: 20,
-          duration: 0.8,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
-            toggleActions: 'play none none none'
-          },
-          delay: index * 0.1
-        });
-      });
-
-      gsap.from('.hero-content', { opacity: 0, y: 80, duration: 1, ease: 'power2.out', delay: 0.5 });
-      gsap.utils.toArray('.nav-link').forEach((link, index) => {
-        gsap.from(link, { opacity: 0, x: -20, duration: 0.5, ease: 'power2.out', delay: 0.2 * index });
-      });
-      
-      // Removed: GSAP animation for '.palette-container'
-
-      gsap.from('.footer', {
-        autoAlpha: 0,
-        y: 20,
-        duration: 1,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '.footer',
-          start: 'top bottom',
-          toggleActions: 'play none none none'
-        }
-      });
-    }
-
-    if (typeof particlesJS !== 'undefined') {
-      const particlesConfig = {
-        particles: {
-          number: { value: 80, density: { enable: true, value_area: 800 } },
-          color: { value: '#ffffff' },
-          shape: { type: 'circle' },
-          opacity: { value: 0.5, random: true },
-          size: { value: 3, random: true },
-          line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
-          move: { enable: true, speed: 2, direction: 'none', random: false }
-        },
-        interactivity: {
-          detect_on: 'canvas',
-          events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' } },
-          modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } }
-        },
-        retina_detect: true
-      };
-      particlesJS('particles-js', particlesConfig);
-
-      const particlesContainer = document.getElementById('particles-js');
-      if (particlesContainer) {
-        let particleUpdateTimeout;
-        const updateParticles = (newConfig) => {
-            clearTimeout(particleUpdateTimeout);
-            particleUpdateTimeout = setTimeout(() => {
-                particlesJS('particles-js', newConfig);
-            }, 50); 
-        };
-
-        particlesContainer.addEventListener('mouseenter', () => {
-          const hoverConfig = JSON.parse(JSON.stringify(particlesConfig));
-          Object.assign(hoverConfig.particles, {
-            number: { value: 100, density: { enable: true, value_area: 800 } },
-            opacity: { value: 0.7, random: true },
-            size: { value: 4, random: true },
-            line_linked: { opacity: 0.5, width: 1.5 },
-            move: { speed: 3 }
-          });
-          updateParticles(hoverConfig);
-        });
-
-        particlesContainer.addEventListener('mouseleave', () => {
-          updateParticles(particlesConfig);
-        });
-      }
-    }
-    
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof gsap !== 'undefined') {
-      gsap.globalTimeline.clear();
-    }
-
-    let refreshTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(refreshTimeout);
-      refreshTimeout = setTimeout(() => {
-        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
-      }, 200);
-    });
-    if (typeof ScrollReveal !== 'undefined') {
-      ScrollReveal().reveal('.section', {
-        distance: '20px',
-        duration: 800,
-        easing: 'ease-out',
-        origin: 'bottom',
-        interval: 100
-      });
-    }
+  const tabSectionIds = ['about', 'projects', 'connect'];
+  const tabLinkMap = new Map();
+  tabSectionIds.forEach(id => {
+    const link = document.querySelector(`.nav-link[href="#${id}"]`);
+    if (link) tabLinkMap.set(id, link);
   });
+  if (tabLinkMap.size && 'IntersectionObserver' in window) {
+    const tabObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const link = tabLinkMap.get(entry.target.id);
+        if (!link) return;
+        tabLinkMap.forEach(l => l.classList.remove('tab-active'));
+        link.classList.add('tab-active');
+      });
+    }, { threshold: 0.4, rootMargin: '-80px 0px -40% 0px' });
+    tabSectionIds.forEach(id => {
+      const section = document.getElementById(id);
+      if (section) tabObserver.observe(section);
+    });
+  }
+
+  function revealAllNow() {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('reveal-visible'));
+  }
+
+  try {
+    const revealEls = document.querySelectorAll('.reveal');
+    if (revealEls.length) {
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('reveal-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+        revealEls.forEach(el => observer.observe(el));
+      } else {
+        revealAllNow();
+      }
+    }
+  } catch (err) {
+    revealAllNow();
+  }
+
+  setTimeout(revealAllNow, 3500);
 });
